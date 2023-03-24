@@ -22,7 +22,7 @@ public class Teacher {
     @Column()
     private String name;
 
-    @ManyToMany(mappedBy = "teachers")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "teachers")
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id",
