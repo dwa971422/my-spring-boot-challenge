@@ -42,7 +42,7 @@ public class TeacherController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("teacher/{teacherId}")
+    @GetMapping("/teacher/{teacherId}")
     public ResponseEntity<TeacherDTO> getTeacherByTeacherId(@PathVariable("teacherId") String teacherId) {
         TeacherDTO result;
 
