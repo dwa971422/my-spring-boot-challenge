@@ -1,33 +1,48 @@
 package com.example.springbootchallenge.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "teacher")
 @AllArgsConstructor
+@NoArgsConstructor
 public class Teacher {
     @Id
-    @Column(name = "teacher_id")
-    private String teacherId;
+    @Column
+    private String id;
 
-    @Column(name = "name")
+    @Column()
     private String name;
 
-    @ManyToMany(
-            cascade = CascadeType.ALL,
-            mappedBy = "teachers"
+    @ManyToMany(mappedBy = "teachers")
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id",
+            scope = Student.class
     )
+    @JsonIdentityReference(alwaysAsId=true)
     private Set<Student> students;
 
-    public String getTeacherId() {
-        return teacherId;
+    public Teacher(String id, String name) {
+        this.id = id;
+        this.name = name;
+        this.students = new HashSet<>();
     }
 
-    public void setTeacherId(String teacherId) {
-        this.teacherId = teacherId;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

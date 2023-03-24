@@ -1,19 +1,21 @@
 package com.example.springbootchallenge.service;
 
 import com.example.springbootchallenge.model.Student;
-import com.example.springbootchallenge.model.Teacher;
 import com.example.springbootchallenge.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
 public class StudentServiceImpl implements StudentService {
+    private final StudentRepository studentRepository;
+
     @Autowired
-    private StudentRepository studentRepository;
+    public StudentServiceImpl(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
 
     @Override
     public List<Student> getAllStudents() {
@@ -21,11 +23,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Teacher> getAllTeachersByStudentId(String studentId) {
-        Student student = studentRepository.findById(studentId).orElseThrow(() ->
-                new NoSuchElementException("Student with ID " + studentId + " NOT FOUND!"));
-
-        return new ArrayList<>(student.getTeachers());
+    public List<Student> getAllStudentsByTeacherId(String teacherId) {
+        return studentRepository.findAllByTeachersId(teacherId);
     }
 
     @Override
