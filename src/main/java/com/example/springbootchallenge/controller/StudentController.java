@@ -1,6 +1,7 @@
 package com.example.springbootchallenge.controller;
 
 import com.example.springbootchallenge.model.Student;
+import com.example.springbootchallenge.model.StudentDTO;
 import com.example.springbootchallenge.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,8 +21,8 @@ public class StudentController {
     }
 
     @GetMapping("/students")
-    public ResponseEntity<List<Student>> getAllStudents() {
-        List<Student> result = studentService.getAllStudents();
+    public ResponseEntity<List<StudentDTO>> getAllStudents() {
+        List<StudentDTO> result = studentService.getAllStudents();
 
         if (result.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -31,8 +32,8 @@ public class StudentController {
     }
 
     @GetMapping("/students/{teacherId}")
-    public ResponseEntity<List<Student>> getAllStudentsByTeacherId(@PathVariable("teacherId") String teacherId) {
-        List<Student> result = studentService.getAllStudentsByTeacherId(teacherId);
+    public ResponseEntity<List<StudentDTO>> getAllStudentsByTeacherId(@PathVariable("teacherId") String teacherId) {
+        List<StudentDTO> result = studentService.getAllStudentsByTeacherId(teacherId);
 
         if (result.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -42,8 +43,8 @@ public class StudentController {
     }
 
     @GetMapping("/student/{studentId}")
-    public ResponseEntity<Student> getStudentByStudentId(@PathVariable("studentId") String studentId) {
-        Student result;
+    public ResponseEntity<StudentDTO> getStudentByStudentId(@PathVariable("studentId") String studentId) {
+        StudentDTO result;
 
         try {
             result = studentService.getStudentByStudentId(studentId);
@@ -55,15 +56,15 @@ public class StudentController {
     }
 
     @PostMapping("/student")
-    public ResponseEntity<Student> createStudent(@RequestBody Student newStudent) {
-        Student result = studentService.createStudent(newStudent);
+    public ResponseEntity<StudentDTO> createStudent(@RequestBody Student newStudent) {
+        StudentDTO result = studentService.createStudent(newStudent);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     @PutMapping("/student/{studentId}")
-    public ResponseEntity<Student> updateStudent(@PathVariable("studentId") String studentId,
-                                                 @RequestBody Student updatedStudent) {
-        Student result;
+    public ResponseEntity<StudentDTO> updateStudent(@PathVariable("studentId") String studentId,
+                                                    @RequestBody Student updatedStudent) {
+        StudentDTO result;
 
         try {
             result = studentService.updateStudent(studentId, updatedStudent);

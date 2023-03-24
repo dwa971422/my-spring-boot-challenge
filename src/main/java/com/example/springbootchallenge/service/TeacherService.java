@@ -1,17 +1,18 @@
 package com.example.springbootchallenge.service;
 
 import com.example.springbootchallenge.model.Teacher;
+import com.example.springbootchallenge.model.TeacherDTO;
 
 import java.util.List;
 
 public interface TeacherService {
-    List<Teacher> getAllTeachers();
+    List<TeacherDTO> getAllTeachers();
 
-    List<Teacher> getAllTeachersByStudentId(String studentId);
+    List<TeacherDTO> getAllTeachersByStudentId(String studentId);
 
-    Teacher getTeacherByTeacherId(String teacherId);
+    TeacherDTO getTeacherByTeacherId(String teacherId);
 
-    Teacher createTeacher(Teacher newTeacher);
+    TeacherDTO createTeacher(Teacher newTeacher);
 
-    Teacher updateTeacher(String teacherId, Teacher updatedTeacher);
+    TeacherDTO updateTeacher(String teacherId, Teacher updatedTeacher);
 }

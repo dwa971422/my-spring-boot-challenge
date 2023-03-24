@@ -1,12 +1,15 @@
 package com.example.springbootchallenge.service;
 
 import com.example.springbootchallenge.model.Teacher;
+import com.example.springbootchallenge.model.TeacherDTO;
+import com.example.springbootchallenge.model.TeacherDTO.TeacherDTOBuilder;
 import com.example.springbootchallenge.repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class TeacherServiceImpl implements TeacherService {
@@ -18,34 +21,67 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<Teacher> getAllTeachers() {
-        return teacherRepository.findAll();
+    public List<TeacherDTO> getAllTeachers() {
+        return teacherRepository.findAll()
+                .stream()
+                .map(teacher -> new TeacherDTOBuilder()
+                        .setId(teacher.getId())
+                        .setName(teacher.getName())
+                        .setDepartment(teacher.getDepartment())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Teacher> getAllTeachersByStudentId(String studentId) {
-        return teacherRepository.findAllByStudentsId(studentId);
+    public List<TeacherDTO> getAllTeachersByStudentId(String studentId) {
+        return teacherRepository.findAllByStudentsId(studentId)
+                .stream()
+                .map(teacher -> new TeacherDTOBuilder()
+                        .setId(teacher.getId())
+                        .setName(teacher.getName())
+                        .setDepartment(teacher.getDepartment())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Teacher getTeacherByTeacherId(String teacherId) {
-        return teacherRepository.findById(teacherId).orElseThrow(() ->
+    public TeacherDTO getTeacherByTeacherId(String teacherId) {
+        Teacher foundTeacher = teacherRepository.findById(teacherId).orElseThrow(() ->
                 new NoSuchElementException("Teacher with ID " + teacherId + " NOT FOUND!"));
+
+        return new TeacherDTOBuilder()
+                .setId(foundTeacher.getId())
+                .setName(foundTeacher.getName())
+                .setDepartment(foundTeacher.getDepartment())
+                .build();
     }
 
     @Override
-    public Teacher createTeacher(Teacher newTeacher) {
-        return teacherRepository.save(newTeacher);
+    public TeacherDTO createTeacher(Teacher newTeacher) {
+        Teacher createdTeacher = teacherRepository.save(newTeacher);
+
+        return new TeacherDTOBuilder()
+                .setId(createdTeacher.getId())
+                .setName(createdTeacher.getName())
+                .setDepartment(createdTeacher.getDepartment())
+                .build();
     }
 
     @Override
-    public Teacher updateTeacher(String teacherId, Teacher updatedTeacher) {
-        Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(() ->
+    public TeacherDTO updateTeacher(String teacherId, Teacher updatedTeacher) {
+        Teacher foundTeacher = teacherRepository.findById(teacherId).orElseThrow(() ->
                 new NoSuchElementException("Teacher with ID " + teacherId + " NOT FOUND!"));
 
-        teacher.setName(updatedTeacher.getName());
-        teacher.setStudents(updatedTeacher.getStudents());
+        foundTeacher.setName(updatedTeacher.getName());
+        foundTeacher.setDepartment(updatedTeacher.getDepartment());
+        foundTeacher.setStudents(updatedTeacher.getStudents());
 
-        return teacherRepository.save(teacher);
+        Teacher savedUpdatedTeacher = teacherRepository.save(foundTeacher);
+
+        return new TeacherDTOBuilder()
+                .setId(savedUpdatedTeacher.getId())
+                .setName(savedUpdatedTeacher.getName())
+                .setDepartment(savedUpdatedTeacher.getDepartment())
+                .build();
     }
 }

@@ -1,13 +1,9 @@
 package com.example.springbootchallenge.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -19,23 +15,20 @@ public class Teacher {
     @Column
     private String id;
 
-    @Column()
+    @Column
     private String name;
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "teachers")
-    @JsonIdentityInfo(
-            generator = ObjectIdGenerators.PropertyGenerator.class,
-            property = "id",
-            scope = Student.class
-    )
-    @JsonIdentityReference(alwaysAsId=true)
-    private Set<Student> students;
+    @Column
+    private String department;
 
-    public Teacher(String id, String name) {
-        this.id = id;
-        this.name = name;
-        this.students = new HashSet<>();
-    }
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "teachers")
+//    @JsonIdentityInfo(
+//            generator = ObjectIdGenerators.PropertyGenerator.class,
+//            property = "id",
+//            scope = Student.class
+//    )
+//    @JsonIdentityReference(alwaysAsId = true)
+    private Set<Student> students;
 
     public String getId() {
         return id;
@@ -51,6 +44,14 @@ public class Teacher {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
     public Set<Student> getStudents() {

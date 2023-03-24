@@ -1,12 +1,15 @@
 package com.example.springbootchallenge.service;
 
 import com.example.springbootchallenge.model.Student;
+import com.example.springbootchallenge.model.StudentDTO;
+import com.example.springbootchallenge.model.StudentDTO.StudentDTOBuilder;
 import com.example.springbootchallenge.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -18,34 +21,67 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
+    public List<StudentDTO> getAllStudents() {
+        return studentRepository.findAll()
+                .stream()
+                .map(student -> new StudentDTOBuilder()
+                        .setId(student.getId())
+                        .setName(student.getName())
+                        .setMajor(student.getMajor())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Student> getAllStudentsByTeacherId(String teacherId) {
-        return studentRepository.findAllByTeachersId(teacherId);
+    public List<StudentDTO> getAllStudentsByTeacherId(String teacherId) {
+        return studentRepository.findAllByTeachersId(teacherId)
+                .stream()
+                .map(student -> new StudentDTOBuilder()
+                        .setId(student.getId())
+                        .setName(student.getName())
+                        .setMajor(student.getMajor())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Student getStudentByStudentId(String studentId) {
-        return studentRepository.findById(studentId).orElseThrow(() ->
+    public StudentDTO getStudentByStudentId(String studentId) {
+        Student foundStudent = studentRepository.findById(studentId).orElseThrow(() ->
                 new NoSuchElementException("Student with ID " + studentId + " NOT FOUND!"));
+
+        return new StudentDTOBuilder()
+                .setId(foundStudent.getId())
+                .setName(foundStudent.getName())
+                .setMajor(foundStudent.getMajor())
+                .build();
     }
 
     @Override
-    public Student createStudent(Student newStudent) {
-        return studentRepository.save(newStudent);
+    public StudentDTO createStudent(Student newStudent) {
+        Student createdStudent = studentRepository.save(newStudent);
+
+        return new StudentDTOBuilder()
+                .setId(createdStudent.getId())
+                .setName(createdStudent.getName())
+                .setMajor(createdStudent.getMajor())
+                .build();
     }
 
     @Override
-    public Student updateStudent(String studentId, Student updatedStudent) {
-        Student student = studentRepository.findById(studentId).orElseThrow(() ->
+    public StudentDTO updateStudent(String studentId, Student updatedStudent) {
+        Student foundStudent = studentRepository.findById(studentId).orElseThrow(() ->
                 new NoSuchElementException("Student with ID " + studentId + " NOT FOUND!"));
 
-        student.setName(updatedStudent.getName());
-        student.setTeachers(updatedStudent.getTeachers());
+        foundStudent.setName(updatedStudent.getName());
+        foundStudent.setMajor(updatedStudent.getMajor());
+        foundStudent.setTeachers(updatedStudent.getTeachers());
 
-        return studentRepository.save(student);
+        Student savedUpdatedStudent = studentRepository.save(foundStudent);
+
+        return new StudentDTOBuilder()
+                .setId(savedUpdatedStudent.getId())
+                .setName(savedUpdatedStudent.getName())
+                .setMajor(savedUpdatedStudent.getMajor())
+                .build();
     }
 }
