@@ -14,5 +14,5 @@ public interface StudentService {
 
     StudentDTO createStudent(Student newStudent);
 
-    StudentDTO updateStudent(String studentId, Student updatedStudent);
+    StudentDTO updateStudent(String studentId, String updatedName, String updatedMajor);
 }

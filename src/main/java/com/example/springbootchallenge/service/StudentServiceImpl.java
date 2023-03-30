@@ -4,6 +4,7 @@ import com.example.springbootchallenge.model.Student;
 import com.example.springbootchallenge.model.StudentDTO;
 import com.example.springbootchallenge.model.StudentDTO.StudentDTOBuilder;
 import com.example.springbootchallenge.repository.StudentRepository;
+import com.example.springbootchallenge.repository.StudentTeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +15,12 @@ import java.util.stream.Collectors;
 @Service
 public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
+    private final StudentTeacherRepository studentTeacherRepository;
 
     @Autowired
-    public StudentServiceImpl(StudentRepository studentRepository) {
+    public StudentServiceImpl(StudentRepository studentRepository, StudentTeacherRepository studentTeacherRepository) {
         this.studentRepository = studentRepository;
+        this.studentTeacherRepository = studentTeacherRepository;
     }
 
     @Override
@@ -34,13 +37,16 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<StudentDTO> getAllStudentsByTeacherId(String teacherId) {
-        return studentRepository.findAllByTeachersId(teacherId)
+        return studentTeacherRepository.findAllByTeacherId(teacherId)
                 .stream()
-                .map(student -> new StudentDTOBuilder()
-                        .setId(student.getId())
-                        .setName(student.getName())
-                        .setMajor(student.getMajor())
-                        .build())
+                .map(studentTeacher -> {
+                    Student student = studentTeacher.getStudent();
+                    return new StudentDTOBuilder()
+                            .setId(student.getId())
+                            .setName(student.getName())
+                            .setMajor(student.getMajor())
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 
@@ -68,13 +74,12 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public StudentDTO updateStudent(String studentId, Student updatedStudent) {
+    public StudentDTO updateStudent(String studentId, String updatedName, String updatedMajor) {
         Student foundStudent = studentRepository.findById(studentId).orElseThrow(() ->
                 new NoSuchElementException("Student with ID " + studentId + " NOT FOUND!"));
 
-        foundStudent.setName(updatedStudent.getName());
-        foundStudent.setMajor(updatedStudent.getMajor());
-        foundStudent.setTeachers(updatedStudent.getTeachers());
+        foundStudent.setName(updatedName);
+        foundStudent.setMajor(updatedMajor);
 
         Student savedUpdatedStudent = studentRepository.save(foundStudent);
 

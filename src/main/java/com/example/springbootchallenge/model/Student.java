@@ -1,9 +1,9 @@
 package com.example.springbootchallenge.model;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
 import java.util.Set;
 
 @Entity
@@ -21,26 +21,11 @@ public class Student {
     @Column
     private String major;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "student_teacher",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "teacher_id")
-    )
-//    @JsonIdentityInfo(
-//            generator = ObjectIdGenerators.PropertyGenerator.class,
-//            property = "id",
-//            scope = Teacher.class
-//    )
-//    @JsonIdentityReference(alwaysAsId = true)
-    private Set<Teacher> teachers;
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Student_Teacher> student_teachers;
 
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -59,11 +44,7 @@ public class Student {
         this.major = major;
     }
 
-    public Set<Teacher> getTeachers() {
-        return teachers;
-    }
-
-    public void setTeachers(Set<Teacher> teachers) {
-        this.teachers = teachers;
+    public Set<Student_Teacher> getStudent_teachers() {
+        return student_teachers;
     }
 }

@@ -14,5 +14,5 @@ public interface TeacherService {
 
     TeacherDTO createTeacher(Teacher newTeacher);
 
-    TeacherDTO updateTeacher(String teacherId, Teacher updatedTeacher);
+    TeacherDTO updateTeacher(String teacherId, String updatedName, String updatedDepartment);
 }

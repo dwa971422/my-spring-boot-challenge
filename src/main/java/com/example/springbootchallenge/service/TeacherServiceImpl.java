@@ -3,6 +3,7 @@ package com.example.springbootchallenge.service;
 import com.example.springbootchallenge.model.Teacher;
 import com.example.springbootchallenge.model.TeacherDTO;
 import com.example.springbootchallenge.model.TeacherDTO.TeacherDTOBuilder;
+import com.example.springbootchallenge.repository.StudentTeacherRepository;
 import com.example.springbootchallenge.repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,10 +15,12 @@ import java.util.stream.Collectors;
 @Service
 public class TeacherServiceImpl implements TeacherService {
     private final TeacherRepository teacherRepository;
+    private final StudentTeacherRepository studentTeacherRepository;
 
     @Autowired
-    public TeacherServiceImpl(TeacherRepository teacherRepository) {
+    public TeacherServiceImpl(TeacherRepository teacherRepository, StudentTeacherRepository studentTeacherRepository) {
         this.teacherRepository = teacherRepository;
+        this.studentTeacherRepository = studentTeacherRepository;
     }
 
     @Override
@@ -34,13 +37,16 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<TeacherDTO> getAllTeachersByStudentId(String studentId) {
-        return teacherRepository.findAllByStudentsId(studentId)
+        return studentTeacherRepository.findAllByStudentId(studentId)
                 .stream()
-                .map(teacher -> new TeacherDTOBuilder()
-                        .setId(teacher.getId())
-                        .setName(teacher.getName())
-                        .setDepartment(teacher.getDepartment())
-                        .build())
+                .map(studentTeacher -> {
+                    Teacher teacher = studentTeacher.getTeacher();
+                    return new TeacherDTOBuilder()
+                            .setId(teacher.getId())
+                            .setName(teacher.getName())
+                            .setDepartment(teacher.getDepartment())
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 
@@ -68,13 +74,12 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public TeacherDTO updateTeacher(String teacherId, Teacher updatedTeacher) {
+    public TeacherDTO updateTeacher(String teacherId, String updatedName, String updatedDepartment) {
         Teacher foundTeacher = teacherRepository.findById(teacherId).orElseThrow(() ->
                 new NoSuchElementException("Teacher with ID " + teacherId + " NOT FOUND!"));
 
-        foundTeacher.setName(updatedTeacher.getName());
-        foundTeacher.setDepartment(updatedTeacher.getDepartment());
-        foundTeacher.setStudents(updatedTeacher.getStudents());
+        foundTeacher.setName(updatedName);
+        foundTeacher.setDepartment(updatedDepartment);
 
         Teacher savedUpdatedTeacher = teacherRepository.save(foundTeacher);
 

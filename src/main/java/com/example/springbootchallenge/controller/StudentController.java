@@ -31,8 +31,8 @@ public class StudentController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/students/{teacherId}")
-    public ResponseEntity<List<StudentDTO>> getAllStudentsByTeacherId(@PathVariable("teacherId") String teacherId) {
+    @GetMapping(value = "/students", params = "teacher_id")
+    public ResponseEntity<List<StudentDTO>> getAllStudentsByTeacherId(@RequestParam(value = "teacher_id") String teacherId) {
         List<StudentDTO> result = studentService.getAllStudentsByTeacherId(teacherId);
 
         if (result.isEmpty()) {
@@ -42,8 +42,8 @@ public class StudentController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/student/{studentId}")
-    public ResponseEntity<StudentDTO> getStudentByStudentId(@PathVariable("studentId") String studentId) {
+    @GetMapping(value = "/students", params = "student_id")
+    public ResponseEntity<StudentDTO> getStudentByStudentId(@RequestParam(value = "student_id") String studentId) {
         StudentDTO result;
 
         try {
@@ -55,19 +55,20 @@ public class StudentController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PostMapping("/student")
+    @PostMapping("/students")
     public ResponseEntity<StudentDTO> createStudent(@RequestBody Student newStudent) {
         StudentDTO result = studentService.createStudent(newStudent);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
-    @PutMapping("/student/{studentId}")
-    public ResponseEntity<StudentDTO> updateStudent(@PathVariable("studentId") String studentId,
-                                                    @RequestBody Student updatedStudent) {
+    @PutMapping("/students")
+    public ResponseEntity<StudentDTO> updateStudent(@RequestParam(value = "student_id") String studentId,
+                                                    @RequestParam(value = "updated_name") String updatedName,
+                                                    @RequestParam(value = "updated_major") String updatedMajor) {
         StudentDTO result;
 
         try {
-            result = studentService.updateStudent(studentId, updatedStudent);
+            result = studentService.updateStudent(studentId, updatedName, updatedMajor);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

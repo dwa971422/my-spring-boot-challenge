@@ -31,8 +31,8 @@ public class TeacherController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/teachers/{studentId}")
-    public ResponseEntity<List<TeacherDTO>> getAllTeachersByStudentId(@PathVariable("studentId") String studentId) {
+    @GetMapping(value = "/teachers", params = "student_id")
+    public ResponseEntity<List<TeacherDTO>> getAllTeachersByStudentId(@RequestParam(value = "student_id") String studentId) {
         List<TeacherDTO> result = teacherService.getAllTeachersByStudentId(studentId);
 
         if (result.isEmpty()) {
@@ -42,8 +42,8 @@ public class TeacherController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/teacher/{teacherId}")
-    public ResponseEntity<TeacherDTO> getTeacherByTeacherId(@PathVariable("teacherId") String teacherId) {
+    @GetMapping(value = "/teachers", params = "teacher_id")
+    public ResponseEntity<TeacherDTO> getTeacherByTeacherId(@RequestParam(value = "teacher_id") String teacherId) {
         TeacherDTO result;
 
         try {
@@ -55,19 +55,20 @@ public class TeacherController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PostMapping("/teacher")
+    @PostMapping("/teachers")
     public ResponseEntity<TeacherDTO> createTeacher(@RequestBody Teacher newTeacher) {
         TeacherDTO result = teacherService.createTeacher(newTeacher);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
-    @PutMapping("/teacher/{teacherId}")
-    public ResponseEntity<TeacherDTO> updateTeacher(@PathVariable("teacherId") String teacherId,
-                                                    @RequestBody Teacher updatedTeacher) {
+    @PutMapping("/teachers")
+    public ResponseEntity<TeacherDTO> updateTeacher(@RequestParam(value = "teacher_id") String teacherId,
+                                                    @RequestParam(value = "updated_name") String updatedName,
+                                                    @RequestParam(value = "updated_department") String updatedDepartment) {
         TeacherDTO result;
 
         try {
-            result = teacherService.updateTeacher(teacherId, updatedTeacher);
+            result = teacherService.updateTeacher(teacherId, updatedName, updatedDepartment);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
