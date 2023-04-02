@@ -3,7 +3,6 @@ package com.example.springbootchallenge.service;
 import com.example.springbootchallenge.model.Teacher;
 import com.example.springbootchallenge.model.TeacherDTO;
 import com.example.springbootchallenge.model.TeacherDTO.TeacherDTOBuilder;
-import com.example.springbootchallenge.repository.StudentTeacherRepository;
 import com.example.springbootchallenge.repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,12 +14,10 @@ import java.util.stream.Collectors;
 @Service
 public class TeacherServiceImpl implements TeacherService {
     private final TeacherRepository teacherRepository;
-    private final StudentTeacherRepository studentTeacherRepository;
 
     @Autowired
-    public TeacherServiceImpl(TeacherRepository teacherRepository, StudentTeacherRepository studentTeacherRepository) {
+    public TeacherServiceImpl(TeacherRepository teacherRepository) {
         this.teacherRepository = teacherRepository;
-        this.studentTeacherRepository = studentTeacherRepository;
     }
 
     @Override
@@ -37,16 +34,13 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<TeacherDTO> getAllTeachersByStudentId(String studentId) {
-        return studentTeacherRepository.findAllByStudentId(studentId)
+        return teacherRepository.findAllByStudentId(studentId)
                 .stream()
-                .map(studentTeacher -> {
-                    Teacher teacher = studentTeacher.getTeacher();
-                    return new TeacherDTOBuilder()
-                            .setId(teacher.getId())
-                            .setName(teacher.getName())
-                            .setDepartment(teacher.getDepartment())
-                            .build();
-                })
+                .map(teacher -> new TeacherDTOBuilder()
+                        .setId(teacher.getId())
+                        .setName(teacher.getName())
+                        .setDepartment(teacher.getDepartment())
+                        .build())
                 .collect(Collectors.toList());
     }
 
